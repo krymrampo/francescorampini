@@ -93,6 +93,8 @@ body {
     font-weight: 450;
     letter-spacing: 0.08em;
     position: relative;
+    display: inline-flex;
+    align-items: center;
     padding: 0.35rem 0;
     transition: opacity var(--transition-fast);
     font-family: 'Inter', 'Georgia', serif;
@@ -1648,15 +1650,23 @@ body {
 
 .excel-table-large {
     padding: 0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .excel-row-large {
     display: grid;
     grid-template-columns: 70px 1fr 1.5fr 1.5fr 80px;
+    min-width: 600px;
     gap: 0.5rem;
     padding: 0.625rem 0.75rem;
     font-size: 0.75rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.excel-row-large span {
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .excel-row-large:last-child {
@@ -2233,7 +2243,6 @@ body {
 }
 
 .faq-item.active .faq-answer {
-    max-height: 200px;
     padding-bottom: 1.25rem;
 }
 
@@ -2444,11 +2453,6 @@ body {
 
 /* Responsive */
 @media (max-width: 900px) {
-    .hero-container {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-    }
-
     .demo-split {
         grid-template-columns: 1fr;
         min-height: auto;
@@ -2515,27 +2519,42 @@ body {
         grid-template-columns: 1fr;
     }
 
-    .hero-left {
-        text-align: center;
-        align-items: center;
-    }
-
-    .hero-right {
-        order: 2;
+    .hero-content {
+        margin-right: 0;
+        max-width: 100%;
     }
 }
 
 @media (max-width: 768px) {
     .nav {
-        padding: 1rem 1.5rem;
+        padding: 0.75rem 0.75rem;
+        column-gap: 0.5rem;
+    }
+
+    .nav-left,
+    .nav-right {
+        gap: 0.5rem;
+        padding: 0;
+    }
+
+    .nav-link {
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        padding: 0.55rem 0.15rem;
     }
 
     .nav-logo {
-        font-size: 1rem;
+        font-size: 0.9rem;
+        letter-spacing: 0.22em;
     }
 
     .hero {
         padding: 3rem 1.5rem;
+    }
+
+    .hero-content {
+        margin-right: 0;
+        padding: 1rem;
     }
 
     .hero-title {
@@ -2551,8 +2570,25 @@ body {
         padding: 1.25rem;
     }
 
+    .hero-background .terminal-body {
+        padding: 1rem 0.75rem;
+        justify-content: flex-start;
+    }
+
+    .hero-background .terminal-line {
+        flex-wrap: wrap;
+        row-gap: 0.25rem;
+    }
+
     .terminal-output {
         font-size: 0.625rem;
+    }
+
+    .hero-background .terminal-output,
+    .hero-background .code-line {
+        white-space: pre-wrap !important;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
     .section {
@@ -2569,21 +2605,6 @@ body {
 
     .benefit-item {
         padding: 1.5rem;
-    }
-
-    .demo-step {
-        grid-template-columns: 36px 1fr;
-        gap: 0.75rem;
-    }
-
-    .step-icon {
-        width: 36px;
-        height: 36px;
-    }
-
-    .step-icon svg {
-        width: 16px;
-        height: 16px;
     }
 
     .cases-grid {
@@ -2714,7 +2735,7 @@ body {
 }
 
 /* Responsive Navbar */
-@media (max-width: 1024px) {
+@media (max-width: 1024px) and (min-width: 769px) {
     .nav {
         padding: 1rem 2rem;
     }
