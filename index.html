@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Francesco Rampini | Automazioni per PMI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400&family=JetBrains+Mono:wght@300;400&family=VT323&family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-left">
+            <a href="#servizi" class="nav-link">Servizi</a>
+            <a href="#usecase" class="nav-link">Esempi</a>
+        </div>
+        <a href="index.html" class="nav-logo">-FR-</a>
+        <div class="nav-right">
+            <a href="#faq" class="nav-link">FAQ</a>
+            <a href="#contatti" class="nav-link nav-link-right">Contatti</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <!-- Terminal Window come sfondo -->
+            <div class="hero-background">
+                <div class="terminal-window terminal-bg">
+                    <div class="terminal-header">
+                        <div class="terminal-buttons">
+                            <span class="terminal-btn btn-close"></span>
+                            <span class="terminal-btn btn-minimize"></span>
+                            <span class="terminal-btn btn-maximize"></span>
+                        </div>
+                        <span class="terminal-title">francesco@automation ~ %</span>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">$</span>
+                            <span class="terminal-command" id="terminal-cmd"></span>
+                            <span class="terminal-cursor"></span>
+                        </div>
+                        <div class="terminal-output code-output" id="terminal-output">
+                            <p class="output-line code-line" data-delay="0"><span class="code-comment">#!/usr/bin/env python3</span></p>
+                            <p class="output-line code-line" data-delay="50"><span class="code-keyword">from</span> automation <span class="code-keyword">import</span> ai_analyze, save_to_crm</p>
+                            <p class="output-line code-line" data-delay="100"></p>
+                            <p class="output-line code-line" data-delay="150"><span class="code-keyword">def</span> <span class="code-function">process_email</span>(email_data):</p>
+                            <p class="output-line code-line" data-delay="200">    <span class="code-comment"># Estrazione dati con AI</span></p>
+                            <p class="output-line code-line" data-delay="250">    analysis = ai_analyze(email_data[<span class="code-string">'body'</span>])</p>
+                            <p class="output-line code-line" data-delay="300">    lead_score = calculate_priority(analysis)</p>
+                            <p class="output-line code-line" data-delay="350"></p>
+                            <p class="output-line code-line" data-delay="400">    <span class="code-comment"># Salvataggio in CRM</span></p>
+                            <p class="output-line code-line" data-delay="450">    save_to_crm({</p>
+                            <p class="output-line code-line" data-delay="500">        <span class="code-string">'client'</span>: email_data[<span class="code-string">'from'</span>],</p>
+                            <p class="output-line code-line" data-delay="550">        <span class="code-string">'request'</span>: analysis.summary,</p>
+                            <p class="output-line code-line" data-delay="600">        <span class="code-string">'priority'</span>: lead_score,</p>
+                            <p class="output-line code-line" data-delay="650">        <span class="code-string">'status'</span>: <span class="code-string">'new'</span></p>
+                            <p class="output-line code-line" data-delay="700">    })</p>
+                            <p class="output-line code-line" data-delay="750"></p>
+                            <p class="output-line code-line" data-delay="800">    <span class="code-keyword">return</span> <span class="code-string">f"✓ Processed: {lead_score}/10"</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Overlay scuro per contrasto -->
+            <div class="hero-overlay"></div>
+            <!-- Contenuto centrato -->
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="title-line" id="typing-name"></span>
+                    <span class="title-underline"></span>
+                </h1>
+                <p class="hero-tagline">aiuto le attività e professionisti ad alleggerire e efficientare il loro lavoro</p>
+                <p class="hero-subtitle">Automazioni per PMI e commercianti</p>
+                <div class="hero-cta">
+                    <a href="#contatti" class="btn-outline btn-light">Parliamone →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stack Marquee -->
+        <section class="tech-stack">
+            <div class="tech-stack-header">
+                <span class="tech-label">Stack Tecnologico</span>
+                <h3>Gli strumenti che uso per costruire le tue automazioni</h3>
+            </div>
+            <div class="marquee-container">
+                <div class="marquee-track">
+                    <!-- Prima serie loghi -->
+                    <div class="marquee-item">
+                        <img src="assets/logos/n8n.svg" alt="n8n" loading="lazy">
+                        <span>n8n</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/make.svg" alt="Make" loading="lazy">
+                        <span>Make</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/zapier.svg" alt="Zapier" loading="lazy">
+                        <span>Zapier</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/airtable.svg" alt="Airtable" loading="lazy">
+                        <span>Airtable</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/notion.svg" alt="Notion" loading="lazy">
+                        <span>Notion</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/openai.svg" alt="OpenAI" loading="lazy">
+                        <span>OpenAI</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/anthropic.svg" alt="Anthropic" loading="lazy">
+                        <span>Anthropic</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/googlecloud.svg" alt="Google Cloud" loading="lazy">
+                        <span>Google Cloud</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/hubspot.svg" alt="HubSpot" loading="lazy">
+                        <span>HubSpot</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/ollama.svg" alt="Ollama" loading="lazy">
+                        <span>Ollama</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/openrouter.svg" alt="OpenRouter" loading="lazy">
+                        <span>OpenRouter</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/perplexity.svg" alt="Perplexity" loading="lazy">
+                        <span>Perplexity</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/google.svg" alt="Google" loading="lazy">
+                        <span>Google</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/javascript.svg" alt="JavaScript" loading="lazy">
+                        <span>JavaScript</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/python.svg" alt="Python" loading="lazy">
+                        <span>Python</span>
+                    </div>
+                    <!-- Duplicati per loop infinito -->
+                    <div class="marquee-item">
+                        <img src="assets/logos/n8n.svg" alt="n8n" loading="lazy">
+                        <span>n8n</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/make.svg" alt="Make" loading="lazy">
+                        <span>Make</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/zapier.svg" alt="Zapier" loading="lazy">
+                        <span>Zapier</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/airtable.svg" alt="Airtable" loading="lazy">
+                        <span>Airtable</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/notion.svg" alt="Notion" loading="lazy">
+                        <span>Notion</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/openai.svg" alt="OpenAI" loading="lazy">
+                        <span>OpenAI</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/anthropic.svg" alt="Anthropic" loading="lazy">
+                        <span>Anthropic</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/googlecloud.svg" alt="Google Cloud" loading="lazy">
+                        <span>Google Cloud</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/python.svg" alt="Python" loading="lazy">
+                        <span>Python</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/hubspot.svg" alt="HubSpot" loading="lazy">
+                        <span>HubSpot</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/ollama.svg" alt="Ollama" loading="lazy">
+                        <span>Ollama</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/openrouter.svg" alt="OpenRouter" loading="lazy">
+                        <span>OpenRouter</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/perplexity.svg" alt="Perplexity" loading="lazy">
+                        <span>Perplexity</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/google.svg" alt="Google" loading="lazy">
+                        <span>Google</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/javascript.svg" alt="JavaScript" loading="lazy">
+                        <span>JavaScript</span>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="assets/logos/python.svg" alt="Python" loading="lazy">
+                        <span>Python</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="servizi" class="section services">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-number">01</span>
+                    <h2 class="section-title">Cosa faccio</h2>
+                </div>
+                <div class="services-grid">
+                    <div class="service-item" data-delay="0">
+                        <div class="service-header">
+                            <span class="service-number">→</span>
+                            <h3>Workflow Automatici</h3>
+                        </div>
+                        <div class="service-viz workflow-viz-large">
+                            <svg viewBox="0 0 400 120" class="viz-svg-large" preserveAspectRatio="xMidYMid meet">
+                                <!-- Background grid -->
+                                <defs>
+                                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#grid)"/>
+
+                                <!-- Connection lines (pipelines) -->
+                                <path class="pipeline" d="M 60 40 L 140 40 L 180 60 L 260 60 L 300 40 L 340 40" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <path class="pipeline-alt" d="M 60 80 L 120 80 L 160 60 L 240 60 L 280 80 L 340 80" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+
+                                <!-- Nodes -->
+                                <circle cx="60" cy="40" r="12" class="node-pulse" fill="currentColor"/>
+                                <circle cx="180" cy="60" r="10" class="node-pulse" fill="currentColor" style="animation-delay: 0.5s"/>
+                                <circle cx="340" cy="40" r="12" class="node-pulse" fill="currentColor" style="animation-delay: 1s"/>
+                                <circle cx="60" cy="80" r="8" class="node-pulse" fill="currentColor" style="animation-delay: 0.3s"/>
+                                <circle cx="340" cy="80" r="8" class="node-pulse" fill="currentColor" style="animation-delay: 0.8s"/>
+
+                                <!-- Flowing data packets -->
+                                <circle cx="60" cy="40" r="4" class="data-packet" fill="var(--white)"/>
+                                <circle cx="60" cy="40" r="4" class="data-packet" fill="var(--white)" style="animation-delay: 1s"/>
+                                <circle cx="60" cy="80" r="3" class="data-packet-alt" fill="var(--white)" style="animation-delay: 0.5s"/>
+
+                                <!-- Processing indicators -->
+                                <rect x="175" y="55" width="10" height="10" rx="2" class="processing-block" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <p><strong>Processi che girano da soli</strong>: email, fatture, archiviazione, notifiche. <strong>Zero intervento manuale.</strong></p>
+                    </div>
+                    <div class="service-item" data-delay="100">
+                        <div class="service-header">
+                            <span class="service-number">→</span>
+                            <h3>Assistenti AI</h3>
+                        </div>
+                        <div class="service-viz ai-viz-large">
+                            <svg viewBox="0 0 400 120" class="viz-svg-large" preserveAspectRatio="xMidYMid meet">
+                                <!-- Central brain - multiple orbital rings -->
+                                <circle cx="200" cy="60" r="20" fill="none" stroke="currentColor" stroke-width="2" class="orbit-ring"/>
+                                <circle cx="200" cy="60" r="35" fill="none" stroke="currentColor" stroke-width="1.5" class="orbit-ring" style="animation-delay: 0.2s"/>
+                                <circle cx="200" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="1" class="orbit-ring" style="animation-delay: 0.4s"/>
+                                <circle cx="200" cy="60" r="65" fill="none" stroke="currentColor" stroke-width="0.5" class="orbit-ring" style="animation-delay: 0.6s"/>
+
+                                <!-- Core -->
+                                <circle cx="200" cy="60" r="8" fill="currentColor" class="ai-core"/>
+
+                                <!-- Orbiting particles -->
+                                <circle cx="200" cy="25" r="3" fill="currentColor" class="orbit-particle"/>
+                                <circle cx="200" cy="25" r="3" fill="currentColor" class="orbit-particle" style="animation-delay: 1s"/>
+                                <circle cx="200" cy="25" r="2" fill="currentColor" class="orbit-particle" style="animation-delay: 2s"/>
+
+                                <!-- Sound wave bars - wider spread -->
+                                <rect x="300" y="40" width="6" height="40" rx="3" fill="currentColor" class="wave-bar"/>
+                                <rect x="315" y="30" width="6" height="60" rx="3" fill="currentColor" class="wave-bar" style="animation-delay: 0.15s"/>
+                                <rect x="330" y="35" width="6" height="50" rx="3" fill="currentColor" class="wave-bar" style="animation-delay: 0.3s"/>
+                                <rect x="345" y="45" width="6" height="30" rx="3" fill="currentColor" class="wave-bar" style="animation-delay: 0.45s"/>
+                                <rect x="360" y="50" width="6" height="20" rx="3" fill="currentColor" class="wave-bar" style="animation-delay: 0.6s"/>
+
+                                <!-- Left side - input signals -->
+                                <rect x="40" y="45" width="8" height="30" rx="4" fill="currentColor" class="input-pulse"/>
+                                <rect x="55" y="40" width="8" height="40" rx="4" fill="currentColor" class="input-pulse" style="animation-delay: 0.3s"/>
+                                <rect x="70" y="50" width="8" height="20" rx="4" fill="currentColor" class="input-pulse" style="animation-delay: 0.6s"/>
+                            </svg>
+                        </div>
+                        <p><strong>ChatGPT addestrato sulla tua attività</strong>. Risponde ai clienti, <strong>qualifica lead</strong>, prepara <strong>bozze precise</strong>.</p>
+                    </div>
+                    <div class="service-item" data-delay="200">
+                        <div class="service-header">
+                            <span class="service-number">→</span>
+                            <h3>Website & Restyling</h3>
+                        </div>
+                        <div class="service-viz website-viz-large">
+                            <svg viewBox="0 0 400 120" class="viz-svg-large" preserveAspectRatio="xMidYMid meet">
+                                <!-- Browser window frame -->
+                                <rect x="80" y="20" width="240" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="2" class="browser-frame"/>
+                                <line x1="80" y1="35" x2="320" y2="35" stroke="currentColor" stroke-width="2"/>
+                                <!-- Browser dots -->
+                                <circle cx="95" cy="27" r="3" fill="currentColor"/>
+                                <circle cx="107" cy="27" r="3" fill="currentColor"/>
+                                <circle cx="119" cy="27" r="3" fill="currentColor"/>
+
+                                <!-- Content blocks that build up -->
+                                <rect x="95" y="48" width="80" height="40" rx="2" fill="currentColor" class="content-block" opacity="0.8"/>
+                                <rect x="185" y="48" width="55" height="18" rx="2" fill="currentColor" class="content-block" style="animation-delay: 0.4s"/>
+                                <rect x="185" y="70" width="55" height="18" rx="2" fill="currentColor" class="content-block" style="animation-delay: 0.8s"/>
+                                <rect x="250" y="48" width="55" height="40" rx="2" fill="currentColor" class="content-block" style="animation-delay: 1.2s"/>
+
+                                <!-- Typing cursor -->
+                                <rect x="248" y="88" width="3" height="8" fill="currentColor" class="typing-cursor"/>
+
+                                <!-- Floating elements outside browser -->
+                                <rect x="40" y="50" width="25" height="20" rx="2" fill="currentColor" class="float-element" opacity="0.4"/>
+                                <rect x="340" y="40" width="20" height="15" rx="2" fill="currentColor" class="float-element" style="animation-delay: 0.5s" opacity="0.4"/>
+                                <circle cx="50" cy="30" r="5" fill="currentColor" class="float-element" style="animation-delay: 1s" opacity="0.3"/>
+                            </svg>
+                        </div>
+                        <p><strong>Siti web moderni</strong>, veloci, ottimizzati. <strong>Creazione ex-novo</strong> o <strong>restyling</strong> di esistenti.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="usecase" class="section usecase">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-number">02</span>
+                    <h2 class="section-title">Un esempio pratico</h2>
+                    <p class="section-desc">Guarda come un'automazione trasforma il tuo lavoro</p>
+                </div>
+
+                <div class="usecase-demo">
+                <div class="demo-split">
+                    <!-- Left: Step Navigation -->
+                    <div class="demo-nav">
+                        <div class="demo-nav-header">
+                            <h3>Gestione Email Intelligente</h3>
+                            <span class="demo-badge">Live Demo</span>
+                        </div>
+                        <div class="demo-steps-list">
+                            <button class="demo-step-nav active" data-step="1">
+                                <span class="step-nav-number">01</span>
+                                <div class="step-nav-content">
+                                    <span class="step-nav-label">Ricezione</span>
+                                    <span class="step-nav-desc">Email in arrivo</span>
+                                </div>
+                            </button>
+                            <button class="demo-step-nav" data-step="2">
+                                <span class="step-nav-number">02</span>
+                                <div class="step-nav-content">
+                                    <span class="step-nav-label">Classificazione</span>
+                                    <span class="step-nav-desc">Analisi AI</span>
+                                </div>
+                            </button>
+                            <button class="demo-step-nav" data-step="3">
+                                <span class="step-nav-number">03</span>
+                                <div class="step-nav-content">
+                                    <span class="step-nav-label">Estrazione</span>
+                                    <span class="step-nav-desc">Riassunto automatico</span>
+                                </div>
+                            </button>
+                            <button class="demo-step-nav" data-step="4">
+                                <span class="step-nav-number">04</span>
+                                <div class="step-nav-content">
+                                    <span class="step-nav-label">Azioni</span>
+                                    <span class="step-nav-desc">Risposta suggerita</span>
+                                </div>
+                            </button>
+                            <button class="demo-step-nav" data-step="5">
+                                <span class="step-nav-number">05</span>
+                                <div class="step-nav-content">
+                                    <span class="step-nav-label">Archiviazione</span>
+                                    <span class="step-nav-desc">Smistamento</span>
+                                </div>
+                            </button>
+                            <button class="demo-step-nav" data-step="6">
+                                <span class="step-nav-number">06</span>
+                                <div class="step-nav-content">
+                                    <span class="step-nav-label">Esportazione</span>
+                                    <span class="step-nav-desc">Salvataggio dati</span>
+                                </div>
+                            </button>
+                            <button class="demo-step-nav" data-step="7">
+                                <span class="step-nav-number">07</span>
+                                <div class="step-nav-content">
+                                    <span class="step-nav-label">Dashboard</span>
+                                    <span class="step-nav-desc">Visualizzazione</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Step Content -->
+                    <div class="demo-content">
+                        <!-- Step 1: Ricezione -->
+                        <div class="demo-step-panel active" data-step="1">
+                            <div class="panel-header">
+                                <div class="panel-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                        <path d="M22 6L12 13L2 6"/>
+                                    </svg>
+                                </div>
+                                <div class="panel-title">
+                                    <span class="step-label">01 — RICEZIONE</span>
+                                    <h4>Nuova email in arrivo</h4>
+                                    <p>Il sistema monitora la casella 24/7</p>
+                                </div>
+                            </div>
+                            <div class="panel-preview">
+                                <div class="email-preview-large">
+                                    <div class="email-header">
+                                        <span class="email-from">mario.rossi@tecnologie.it</span>
+                                        <span class="email-time">10:32</span>
+                                    </div>
+                                    <span class="email-subject-large">Richiesta preventivo e-commerce — Urgente</span>
+                                    <div class="email-body-large">
+                                        <p>Buongiorno,</p>
+                                        <p>siamo interessati a sviluppare un e-commerce per la nostra azienda. Vorremmo un preventivo per un sito con:</p>
+                                        <ul>
+                                            <li>Catalogo di circa 500 prodotti</li>
+                                            <li>Integrazione pagamenti</li>
+                                            <li>Gestione inventario</li>
+                                            <li>Sincronizzazione con gestionale</li>
+                                        </ul>
+                                        <p>In attesa di un vostro gentile riscontro.</p>
+                                        <p>Cordiali saluti,<br>Mario Rossi</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Classificazione -->
+                        <div class="demo-step-panel" data-step="2">
+                            <div class="panel-header">
+                                <div class="panel-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>
+                                    </svg>
+                                </div>
+                                <div class="panel-title">
+                                    <span class="step-label">02 — CLASSIFICAZIONE</span>
+                                    <h4>Analisi AI istantanea</h4>
+                                    <p>Riconoscimento automatico di intento, priorità e categoria</p>
+                                </div>
+                            </div>
+                            <div class="panel-preview">
+                                <div class="classification-result">
+                                    <div class="class-item">
+                                        <span class="class-label">Priorità rilevata</span>
+                                        <span class="tag tag-priority-large">Alta Priorità</span>
+                                    </div>
+                                    <div class="class-item">
+                                        <span class="class-label">Categoria</span>
+                                        <span class="tag tag-category-large">Commerciale</span>
+                                    </div>
+                                    <div class="class-item">
+                                        <span class="class-label">Azione richiesta</span>
+                                        <span class="tag tag-action-large">Richiede Preventivo</span>
+                                    </div>
+                                    <div class="class-item">
+                                        <span class="class-label">Tipo contatto</span>
+                                        <span class="tag tag-sender-large">Nuovo Contatto</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Estrazione -->
+                        <div class="demo-step-panel" data-step="3">
+                            <div class="panel-header">
+                                <div class="panel-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                                    </svg>
+                                </div>
+                                <div class="panel-title">
+                                    <span class="step-label">03 — ESTRAZIONE</span>
+                                    <h4>Riassunto automatico</h4>
+                                    <p>Punti chiave identificati e strutturati</p>
+                                </div>
+                            </div>
+                            <div class="panel-preview">
+                                <div class="ai-analysis-large">
+                                    <div class="ai-header">
+                                        <span class="ai-dot"></span>
+                                        <span class="ai-label-large">AI Analysis</span>
+                                    </div>
+                                    <div class="extracted-data">
+                                        <div class="data-row">
+                                            <span class="data-key">Richiesta:</span>
+                                            <span class="data-value">Sviluppo e-commerce</span>
+                                        </div>
+                                        <div class="data-row">
+                                            <span class="data-key">Catalogo:</span>
+                                            <span class="data-value">~500 prodotti</span>
+                                        </div>
+                                        <div class="data-row">
+                                            <span class="data-key">Funzionalità:</span>
+                                            <span class="data-value">Pagamenti + Inventario + Sync gestionale</span>
+                                        </div>
+                                        <div class="data-row">
+                                            <span class="data-key">Urgente:</span>
+                                            <span class="data-value">Sì (flaggato nel soggetto)</span>
+                                        </div>
+                                        <div class="data-row highlight">
+                                            <span class="data-key">Da chiedere:</span>
+                                            <span class="data-value">Tempistica non specificata</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Azioni -->
+                        <div class="demo-step-panel" data-step="4">
+                            <div class="panel-header">
+                                <div class="panel-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                </div>
+                                <div class="panel-title">
+                                    <span class="step-label">04 — AZIONI</span>
+                                    <h4>Risposta suggerita</h4>
+                                    <p>Template pronto per l'invio</p>
+                                </div>
+                            </div>
+                            <div class="panel-preview">
+                                <div class="suggested-actions-large">
+                                    <div class="action-card">
+                                        <span class="action-icon">📄</span>
+                                        <span class="action-name">Preventivo standard</span>
+                                        <span class="action-desc">Invia template pre-configurato</span>
+                                    </div>
+                                    <div class="action-card">
+                                        <span class="action-icon">📅</span>
+                                        <span class="action-name">Call conoscitiva</span>
+                                        <span class="action-desc">Richiedi call per approfondire</span>
+                                    </div>
+                                    <div class="action-card">
+                                        <span class="action-icon">➡️</span>
+                                        <span class="action-name">Inoltra al team</span>
+                                        <span class="action-desc">Passa al reparto tecnico</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Archiviazione -->
+                        <div class="demo-step-panel" data-step="5">
+                            <div class="panel-header">
+                                <div class="panel-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                                    </svg>
+                                </div>
+                                <div class="panel-title">
+                                    <span class="step-label">05 — ARCHIVIAZIONE</span>
+                                    <h4>Smistamento automatico</h4>
+                                    <p>Email organizzata e notifica inviata</p>
+                                </div>
+                            </div>
+                            <div class="panel-preview">
+                                <div class="filing-result">
+                                    <div class="folder-large">
+                                        <div class="folder-icon-large">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="folder-info">
+                                            <span class="folder-name">Preventivi / Da Evadere</span>
+                                            <span class="folder-path">Gmail > Clienti > 2024</span>
+                                        </div>
+                                        <span class="folder-badge">+1 nuovo</span>
+                                    </div>
+                                    <div class="notification-sent">
+                                        <div class="toast-large">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span>Notifica inviata al team commerciale</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 6: Esportazione -->
+                        <div class="demo-step-panel" data-step="6">
+                            <div class="panel-header">
+                                <div class="panel-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                        <path d="M14 2v6h6"/>
+                                        <path d="M8 13h2M8 17h2M14 13h2M14 17h2"/>
+                                    </svg>
+                                </div>
+                                <div class="panel-title">
+                                    <span class="step-label">06 — ESPORTAZIONE</span>
+                                    <h4>Salvataggio automatico</h4>
+                                    <p>Dati estratti salvati nel tuo Excel/Google Sheets</p>
+                                </div>
+                            </div>
+                            <div class="panel-preview">
+                                <div class="excel-large">
+                                    <div class="excel-header-large">
+                                        <span class="excel-icon-large">📊</span>
+                                        <div class="excel-info">
+                                            <span class="excel-title-large">Preventivi_2024.xlsx</span>
+                                            <span class="excel-path">Google Drive > Automazioni > Dati</span>
+                                        </div>
+                                        <span class="excel-status-large">Aggiornato ora</span>
+                                    </div>
+                                    <div class="excel-table-large">
+                                        <div class="excel-row-large excel-row-header">
+                                            <span>Data</span>
+                                            <span>Cliente</span>
+                                            <span>Email</span>
+                                            <span>Richiesta</span>
+                                            <span>Stato</span>
+                                        </div>
+                                        <div class="excel-row-large excel-row-new">
+                                            <span>14/02</span>
+                                            <span>Mario Rossi</span>
+                                            <span>mario.rossi@tecnologie.it</span>
+                                            <span>E-commerce 500 prodotti</span>
+                                            <span class="status-new">Nuovo</span>
+                                        </div>
+                                        <div class="excel-row-large">
+                                            <span>13/02</span>
+                                            <span>Laura Bianchi</span>
+                                            <span>laura.b@studio.it</span>
+                                            <span>Sito vetrina aziendale</span>
+                                            <span>In corso</span>
+                                        </div>
+                                        <div class="excel-row-large">
+                                            <span>12/02</span>
+                                            <span>Giuseppe Verdi</span>
+                                            <span>g.verdi@shop.it</span>
+                                            <span>Integrazione API magazzino</span>
+                                            <span>Completato</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 7: Dashboard -->
+                        <div class="demo-step-panel" data-step="7">
+                            <div class="panel-header">
+                                <div class="panel-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                                    </svg>
+                                </div>
+                                <div class="panel-title">
+                                    <span class="step-label">07 — DASHBOARD</span>
+                                    <h4>Visualizzazione immediata</h4>
+                                    <p>Tutte le informazioni a colpo d'occhio</p>
+                                </div>
+                            </div>
+                            <div class="panel-preview">
+                                <div class="dashboard-large">
+                                    <div class="dash-card-large">
+                                        <div class="dash-card-header">
+                                            <span class="dash-icon">📧</span>
+                                            <span class="dash-title">Richiesta in elaborazione</span>
+                                            <span class="dash-status priority-high">Alta priorità</span>
+                                        </div>
+                                        <div class="dash-details">
+                                            <div class="dash-row">
+                                                <span class="dash-label">Cliente:</span>
+                                                <span class="dash-value">Mario Rossi — TecnoLogic Srl</span>
+                                            </div>
+                                            <div class="dash-row">
+                                                <span class="dash-label">Richiesta:</span>
+                                                <span class="dash-value">E-commerce 500 prodotti</span>
+                                            </div>
+                                            <div class="dash-row">
+                                                <span class="dash-label">Stima budget:</span>
+                                                <span class="dash-value">€5.000 — €10.000</span>
+                                            </div>
+                                            <div class="dash-row">
+                                                <span class="dash-label">Azioni:</span>
+                                                <span class="dash-value">Preventivo richiesto, call da programmare</span>
+                                            </div>
+                                        </div>
+                                        <div class="dash-actions-large">
+                                            <button class="dash-btn">Apri dettaglio</button>
+                                            <button class="dash-btn primary">Rispondi ora</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Altri Use Cases -->
+        <section class="section more-cases">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-number">03</span>
+                    <h2 class="section-title">Altre automazioni</h2>
+                </div>
+                <div class="cases-grid">
+                    <div class="case-card" data-delay="0">
+                        <div class="case-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                                <rect x="9" y="3" width="6" height="4" rx="1"/>
+                                <path d="M9 12h6M9 16h6"/>
+                            </svg>
+                        </div>
+                        <h3>Fatturazione Automatica</h3>
+                        <p>Genera e invia fatture, solleciti e promemoria di pagamento senza intervento manuale.</p>
+                        <span class="case-saving">Risparmi: 10+ ore/settimana</span>
+                    </div>
+                    <div class="case-card" data-delay="100">
+                        <div class="case-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <path d="M3 9h18M9 21V9"/>
+                            </svg>
+                        </div>
+                        <h3>Gestione Inventario</h3>
+                        <p>Monitora stock, riordina automaticamente, sincronizza tra più canali di vendita.</p>
+                        <span class="case-saving">Errori ridotti: -95%</span>
+                    </div>
+                    <div class="case-card" data-delay="200">
+                        <div class="case-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                            </svg>
+                        </div>
+                        <h3>Assistenza Clienti</h3>
+                        <p>Chatbot intelligenti, risposte automatiche, escalation smart ai operatori umani.</p>
+                        <span class="case-saving">Response time: -70%</span>
+                    </div>
+                    <div class="case-card" data-delay="300">
+                        <div class="case-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <h3>Sync Dati</h3>
+                        <p>Sincronizza dati tra CRM, e-commerce, contabilità e altri sistemi aziendali.</p>
+                        <span class="case-saving">Duplicazioni: -100%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="processo" class="section process">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-number">04</span>
+                    <h2 class="section-title">Come funziona</h2>
+                </div>
+                <div class="process-timeline">
+                    <div class="timeline-line">
+                        <div class="timeline-progress"></div>
+                    </div>
+                    <div class="process-steps-new">
+                        <div class="process-step-new" data-delay="0">
+                            <div class="step-dot">
+                                <span class="dot-number">1</span>
+                            </div>
+                            <div class="step-content-new">
+                                <h3>Analisi</h3>
+                                <p>Identifichiamo insieme i processi che possono essere automatizzati.</p>
+                            </div>
+                        </div>
+                        <div class="process-step-new" data-delay="200">
+                            <div class="step-dot">
+                                <span class="dot-number">2</span>
+                            </div>
+                            <div class="step-content-new">
+                                <h3>Progetto</h3>
+                                <p>Definisco la soluzione più adatta alle tue esigenze specifiche.</p>
+                            </div>
+                        </div>
+                        <div class="process-step-new" data-delay="400">
+                            <div class="step-dot">
+                                <span class="dot-number">3</span>
+                            </div>
+                            <div class="step-content-new">
+                                <h3>Implementazione</h3>
+                                <p>Realizzo l'automazione e la integro nel tuo flusso di lavoro.</p>
+                            </div>
+                        </div>
+                        <div class="process-step-new" data-delay="600">
+                            <div class="step-dot">
+                                <span class="dot-number">4</span>
+                            </div>
+                            <div class="step-content-new">
+                                <h3>Supporto</h3>
+                                <p>Ti accompagno nell'utilizzo e nell'ottimizzazione continua.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="section faq">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-number">05</span>
+                    <h2 class="section-title">Domande frequenti</h2>
+                </div>
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Come funziona l'automazione?</span>
+                            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Analizziamo insieme i tuoi processi manuali ripetitivi. Progetto una soluzione su misura che si integra con i tuoi strumenti esistenti. Una volta attivata, l'automazione lavora 24/7 senza intervento umano.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Quanto costa?</span>
+                            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Ogni progetto è personalizzato. Il costo dipende dalla complessità e dal numero di processi da automatizzare. Dopo un'analisi iniziale gratuita, ti presento un preventivo dettagliato senza sorprese.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Quanto tempo serve?</span>
+                            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Un'automazione semplice può essere pronta in pochi giorni. Progetti più complessi richiedono 2-4 settimane. Ti do sempre una tempistica realistica prima di iniziare.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>C'è supporto post-vendita?</span>
+                            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Sì. Offro assistenza continua, manutenzione e aggiornamenti. Se qualcosa non funziona, risolvo io il problema. La tua automazione deve funzionare sempre.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Serve competenza tecnica?</span>
+                            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>No. L'automazione è pensata per essere usata da chiunque. Ti spiego tutto in modo semplice e ti lascio documentazione chiara. Se serve, sono disponibile per chiarimenti.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contatti" class="section contact">
+            <div class="section-container">
+                <div class="contact-header">
+                    <span class="section-number">06</span>
+                    <h2 class="section-title">Parliamone</h2>
+                    <p class="contact-subtitle">Raccontami le tue esigenze. Troviamo insieme la soluzione.</p>
+                </div>
+                <div class="contact-split">
+                    <div class="contact-form-col">
+                        <h3 class="contact-col-title">Via email</h3>
+                        <form class="contact-form" id="contact-form">
+                            <div class="form-group">
+                                <label for="name">Nome</label>
+                                <input type="text" id="name" name="name" required>
+                                <div class="input-line"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required>
+                                <div class="input-line"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Messaggio</label>
+                                <textarea id="message" name="message" rows="4" required></textarea>
+                                <div class="input-line"></div>
+                            </div>
+                            <button type="submit" class="btn-submit">
+                                <span class="btn-text">Invia</span>
+                                <span class="btn-arrow">→</span>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="contact-whatsapp-col">
+                        <h3 class="contact-col-title">Via WhatsApp</h3>
+                        <p class="whatsapp-desc">Preferisci scrivermi direttamente? Sono disponibile anche su WhatsApp per una risposta più veloce.</p>
+                        <a href="https://wa.me/393403579775" class="whatsapp-link" target="_blank" rel="noopener noreferrer">
+                            <span class="whatsapp-icon-large">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                </svg>
+                            </span>
+                            <span class="whatsapp-text-large">Scrivimi su WhatsApp</span>
+                            <span class="whatsapp-number-large">340 357 9775</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <p class="footer-name">Francesco Rampini</p>
+                    <p class="footer-role">Automazioni & Sviluppo Software</p>
+                    <p class="footer-vat">P.IVA 12345678901</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                    <a href="#" class="footer-link">Cookie Policy</a>
+                    <a href="#contatti" class="footer-link">Contatti</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2024 Francesco Rampini. Tutti i diritti riservati.</p>
+                <p class="footer-email">info@francescorampini.it</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
