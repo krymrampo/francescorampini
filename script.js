@@ -8,90 +8,104 @@ document.addEventListener('DOMContentLoaded', () => {
     initFAQAccordion();
 });
 
-// Navigation scroll behavior - navbar stays fixed and visible
+// Hero animation - OTTIMIZZATA per performance
 function initHeroAnimation() {
-    const typingName = document.getElementById('typing-name');
-    const heroTagline = document.querySelector('.hero-tagline');
+    const heroTitle = document.querySelector('.hero-title');
+    const heroTagline = document.getElementById('typing-description');
     const heroSubtitle = document.querySelector('.hero-subtitle');
     const heroCta = document.querySelector('.hero-cta');
-    const terminalWindow = document.querySelector('.terminal-window');
-    const terminalCommand = document.getElementById('terminal-cmd');
-    const terminalOutput = document.getElementById('terminal-output');
 
-    const name = 'Francesco Rampini';
-    const command = 'python email_automation.py';
+    const description = 'aiuto le attività e professionisti ad alleggerire e efficientare il loro lavoro';
 
-    // Nome: già presente nel DOM con CSS animation
-    if (typingName) {
-        typingName.textContent = name;
+    // Verifica che gli elementi esistano per evitare errori
+    if (!heroTagline) return;
+
+    // Animate title (fade in) - usa CSS animation invece di JS quando possibile
+    if (heroTitle) {
+        heroTitle.style.opacity = '1';
+        heroTitle.style.transform = 'translateY(0)';
     }
 
-    // Animate tagline
-    setTimeout(() => {
-        if (heroTagline) heroTagline.classList.add('animate');
-    }, 800);
+    // Type description - usa requestAnimationFrame per timing preciso
+    // Delay iniziale per dare tempo al browser di finire il layout iniziale
+    const startDelay = 500;
 
-    // Animate subtitle
-    setTimeout(() => {
-        if (heroSubtitle) heroSubtitle.classList.add('animate');
-    }, 1100);
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            // Prepara l'elemento per l'animazione
+            heroTagline.style.opacity = '1';
+            heroTagline.style.transform = 'translateY(0)';
 
-    // Animate CTA
-    setTimeout(() => {
-        if (heroCta) heroCta.classList.add('animate');
-    }, 1400);
+            // Avvia l'animazione typewriter
+            typeTextWithCursor(heroTagline, description, 45);
 
-    // Type command in terminal
-    setTimeout(() => {
-        if (terminalCommand) {
-            typeText(terminalCommand, command, 40);
-        }
-    }, 1800);
+            // Calcola quando finisce l'animazione (ms per carattere * numero caratteri)
+            const animDuration = description.length * 45;
 
-    // Codice Python: scrittura carattere per carattere per ogni riga (più veloce)
-    setTimeout(() => {
-        if (terminalOutput) {
-            const lines = terminalOutput.querySelectorAll('.output-line');
-            typeCodeLines(lines, 0, 8);
-        }
-    }, 2400);
+            // Schedule animazioni successive
+            if (heroSubtitle) {
+                setTimeout(() => {
+                    heroSubtitle.classList.add('animate');
+                }, animDuration + 200);
+            }
+
+            if (heroCta) {
+                setTimeout(() => {
+                    heroCta.classList.add('animate');
+                }, animDuration + 500);
+            }
+        }, startDelay);
+    });
 }
 
-// Type code lines character by character
-function typeCodeLines(lines, index, speed) {
-    if (index >= lines.length) return;
+// Type text with cursor animation - OTTIMIZZATA per performance
+function typeTextWithCursor(element, text, speed) {
+    let i = 0;
+    const totalChars = text.length;
 
-    const line = lines[index];
-    const originalHTML = line.innerHTML;
-    const text = line.textContent;
-    line.textContent = '';
-    line.style.opacity = '1';
+    // Crea il cursore una sola volta e lo posiziona via CSS (no DOM manipulation)
+    const cursor = document.createElement('span');
+    cursor.className = 'typing-cursor';
+    cursor.textContent = '|';
 
-    let charIndex = 0;
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = originalHTML;
+    // Prepara l'elemento: contenitore per testo + cursore separato
+    const textSpan = document.createElement('span');
+    textSpan.className = 'typing-text';
+    element.textContent = '';
+    element.appendChild(textSpan);
+    element.appendChild(cursor);
 
-    function typeChar() {
-        if (charIndex < text.length) {
-            // Ricostruisci l'HTML progressivamente
-            const partialText = text.substring(0, charIndex + 1);
-            line.textContent = partialText;
-            charIndex++;
-            setTimeout(typeChar, speed);
+    // Ottimizzazione: usa requestAnimationFrame per timing più preciso
+    let lastTime = 0;
+    const charDelay = speed; // ms tra caratteri
+
+    function type(currentTime) {
+        if (!lastTime) lastTime = currentTime;
+        const elapsed = currentTime - lastTime;
+
+        // Aggiungi caratteri in base al tempo trascorso
+        const charsToAdd = Math.floor(elapsed / charDelay);
+
+        if (charsToAdd > 0 && i < totalChars) {
+            // Batch: aggiungi più caratteri in una sola operazione se necessario
+            const newIndex = Math.min(i + charsToAdd, totalChars);
+            textSpan.textContent = text.substring(0, newIndex);
+            i = newIndex;
+            lastTime = currentTime - (elapsed % charDelay);
+        }
+
+        if (i < totalChars) {
+            requestAnimationFrame(type);
         } else {
-            // Riga completa, ripristina HTML originale con syntax highlighting
-            line.innerHTML = originalHTML;
-            // Passa alla riga successiva
-            setTimeout(() => {
-                typeCodeLines(lines, index + 1, speed);
-            }, 50);
+            // Animazione completata, aggiungi classe per stato finale
+            element.classList.add('typing-complete');
         }
     }
 
-    typeChar();
+    requestAnimationFrame(type);
 }
 
-// Type text animation
+// Type text animation (simple version without cursor)
 function typeText(element, text, speed) {
     let i = 0;
     element.textContent = '';

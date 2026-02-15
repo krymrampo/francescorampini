@@ -208,53 +208,16 @@ body {
     position: relative;
     padding: 4rem 3rem;
     overflow: hidden;
+    background: var(--white);
 }
 
-/* Terminal Window come sfondo */
-.hero-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-}
-
-.hero-background .terminal-window {
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    opacity: 1;
-    border-radius: 0;
-}
-
-.hero-background .terminal-body {
-    min-height: 100%;
-}
-
-/* Overlay leggero per sfondo chiaro */
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.15);
-    z-index: 2;
-}
-
-/* Contenuto posizionato a destra sopra l'overlay */
+/* Contenuto centrato */
 .hero-content {
     position: relative;
     z-index: 3;
-    text-align: right;
+    text-align: center;
     max-width: 800px;
     padding: 2rem;
-    margin-left: auto;
-    margin-right: 5%;
 }
 
 .hero-title {
@@ -266,47 +229,17 @@ body {
     margin-bottom: 1.5rem;
     text-transform: uppercase;
     color: #1a1a1a;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: relative;
     display: inline-block;
-    padding-left: 20px;
+    /* Ottimizzazione: transizione smooth per animazione JS */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    will-change: transform, opacity;
 }
 
 .title-line {
     display: block;
-    min-height: 1.2em;
-}
-
-.title-line {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 1s ease forwards;
-    animation-delay: 0.3s;
-}
-
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Linea decorativa verticale a metà altezza */
-.title-underline {
-    position: absolute;
-    left: -40px;
-    top: 30%;
-    width: 4px;
-    height: 0;
-    background: rgba(0, 0, 0, 0.25);
-    border-radius: 2px;
-    animation: expandHeight 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards;
-}
-
-@keyframes expandHeight {
-    to {
-        height: 100px;
-    }
 }
 
 .hero-tagline {
@@ -315,18 +248,37 @@ body {
     color: #333333;
     letter-spacing: 0.01em;
     margin-bottom: 0.75rem;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-    text-shadow: none;
-    max-width: 600px;
-    margin-left: auto;
-    text-align: right;
+    min-height: 1.7em;
+    /* Ottimizzazione performance */
+    will-change: contents;
+    contain: layout style;
 }
 
-.hero-tagline.animate {
-    opacity: 1;
-    transform: translateY(0);
+/* Struttura: span testo + span cursore */
+.hero-tagline .typing-text {
+    display: inline;
+}
+
+.hero-tagline .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background: #333;
+    margin-left: 2px;
+    animation: cursorBlink 1s infinite;
+    vertical-align: middle;
+    /* Ottimizzazione: il cursore è isolato, non causa reflow */
+    will-change: opacity;
+}
+
+/* Quando l'animazione è completata, mantieni solo il cursore che lampeggia */
+.hero-tagline.typing-complete .typing-cursor {
+    animation: cursorBlink 1s infinite;
+}
+
+@keyframes cursorBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
 }
 
 .hero-subtitle {
@@ -338,7 +290,6 @@ body {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.8s ease, transform 0.8s ease;
-    text-shadow: none;
 }
 
 .hero-subtitle.animate {
@@ -721,7 +672,7 @@ body {
 }
 
 .service-viz {
-    height: 120px;
+    height: 160px;
     margin-bottom: 1rem;
     color: var(--gray-dark);
     position: relative;
