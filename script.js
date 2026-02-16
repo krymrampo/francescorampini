@@ -1,5 +1,6 @@
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
+    initConsentManagement();
     initHeroAnimation();
     initScrollReveal();
     initFormHandling();
@@ -8,6 +9,604 @@ document.addEventListener('DOMContentLoaded', () => {
     initFAQAccordion();
     initFooterYear();
 });
+
+const CONSENT_STORAGE_KEY = 'fr_cookie_consent_v1';
+const CONSENT_ID_STORAGE_KEY = 'fr_cookie_consent_id';
+const CONSENT_VERSION = '2026-02-16';
+const CONSENT_MAX_AGE_DAYS = 180;
+const CONSENT_LOG_TIMEOUT_MS = 2500;
+const CONSENT_DEFAULT = {
+    necessary: true,
+    analytics: false,
+    marketing: false
+};
+
+let analyticsInitialized = false;
+let marketingInitialized = false;
+let analyticsPageViewTracked = false;
+let marketingPageViewTracked = false;
+
+function initConsentManagement() {
+    if (document.body.dataset.cookieUiReady === 'true') return;
+    document.body.dataset.cookieUiReady = 'true';
+    initConsentModeDefaults();
+
+    injectConsentMarkup();
+    bindConsentEvents();
+
+    const savedConsent = readStoredConsent();
+    if (!savedConsent) {
+        applyConsent(CONSENT_DEFAULT);
+        openConsentBanner();
+        return;
+    }
+
+    applyConsent(savedConsent.preferences);
+}
+
+function readStoredConsent() {
+    try {
+        const raw = localStorage.getItem(CONSENT_STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object' || !parsed.preferences) return null;
+        if (parsed.version !== CONSENT_VERSION || isConsentExpired(parsed)) {
+            localStorage.removeItem(CONSENT_STORAGE_KEY);
+            return null;
+        }
+        return parsed;
+    } catch (_error) {
+        return null;
+    }
+}
+
+function isConsentExpired(consentPayload) {
+    const now = Date.now();
+    const expiresAtMs = Date.parse(consentPayload?.expiresAt || '');
+    if (Number.isFinite(expiresAtMs)) {
+        return now > expiresAtMs;
+    }
+
+    const updatedAtMs = Date.parse(consentPayload?.updatedAt || '');
+    if (!Number.isFinite(updatedAtMs)) return true;
+
+    return (now - updatedAtMs) > (CONSENT_MAX_AGE_DAYS * 24 * 60 * 60 * 1000);
+}
+
+function getConsentIdentifier() {
+    const fallback = `consent_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+
+    try {
+        const existingId = localStorage.getItem(CONSENT_ID_STORAGE_KEY);
+        if (existingId) return existingId;
+
+        const generatedId = window.crypto?.randomUUID ? window.crypto.randomUUID() : fallback;
+        localStorage.setItem(CONSENT_ID_STORAGE_KEY, generatedId);
+        return generatedId;
+    } catch (_error) {
+        return fallback;
+    }
+}
+
+function persistConsent(preferences, source = 'unknown') {
+    const updatedAt = new Date();
+    const expiresAt = new Date(updatedAt.getTime() + (CONSENT_MAX_AGE_DAYS * 24 * 60 * 60 * 1000));
+    const consentId = getConsentIdentifier();
+    const payload = {
+        id: consentId,
+        version: CONSENT_VERSION,
+        updatedAt: updatedAt.toISOString(),
+        expiresAt: expiresAt.toISOString(),
+        source,
+        preferences: {
+            necessary: true,
+            analytics: Boolean(preferences.analytics),
+            marketing: Boolean(preferences.marketing)
+        }
+    };
+
+    try {
+        localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(payload));
+    } catch (_error) {
+        // Ignore storage failures, consent still applies for current session.
+    }
+
+    void logConsentEvidence(payload);
+    return payload;
+}
+
+function applyConsent(preferences) {
+    const normalized = {
+        necessary: true,
+        analytics: Boolean(preferences.analytics),
+        marketing: Boolean(preferences.marketing)
+    };
+
+    if (normalized.analytics) {
+        enableAnalyticsTracking();
+    } else {
+        disableAnalyticsTracking();
+    }
+
+    if (normalized.marketing) {
+        enableMarketingTracking();
+    } else {
+        disableMarketingTracking();
+    }
+}
+
+function getTrackingConfig() {
+    const userConfig = window.FR_TRACKING_CONFIG || {};
+    return {
+        ga4MeasurementId: String(userConfig.ga4MeasurementId || '').trim(),
+        googleAdsId: String(userConfig.googleAdsId || '').trim(),
+        metaPixelId: String(userConfig.metaPixelId || '').trim(),
+        consentLogEndpoint: String(userConfig.consentLogEndpoint || '').trim(),
+        policyVersion: String(userConfig.policyVersion || CONSENT_VERSION).trim()
+    };
+}
+
+function ensureDataLayerStub() {
+    if (!window.dataLayer) {
+        window.dataLayer = [];
+    }
+
+    if (!window.gtag) {
+        window.gtag = function gtag() {
+            window.dataLayer.push(arguments);
+        };
+    }
+}
+
+function initConsentModeDefaults() {
+    ensureDataLayerStub();
+    window.gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500
+    });
+}
+
+function ensureGtagBase(tagIds = []) {
+    const validTagIds = tagIds.filter(Boolean);
+    if (validTagIds.length === 0) return;
+
+    ensureDataLayerStub();
+
+    if (!document.querySelector('script[data-cookie-managed="gtag"]')) {
+        const bootstrapId = validTagIds[0];
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(bootstrapId)}`;
+        script.dataset.cookieManaged = 'gtag';
+        document.head.appendChild(script);
+        window.gtag('js', new Date());
+    }
+
+    validTagIds.forEach((id) => {
+        window.gtag('config', id, {
+            anonymize_ip: true,
+            allow_google_signals: false,
+            send_page_view: false
+        });
+    });
+}
+
+function enableAnalyticsTracking() {
+    const config = getTrackingConfig();
+    if (!config.ga4MeasurementId) return;
+
+    if (!analyticsInitialized) {
+        ensureGtagBase([config.ga4MeasurementId]);
+        analyticsInitialized = true;
+    }
+
+    window.gtag('consent', 'update', {
+        analytics_storage: 'granted'
+    });
+
+    if (!analyticsPageViewTracked) {
+        window.gtag('event', 'page_view', {
+            page_path: window.location.pathname,
+            page_location: window.location.href,
+            page_title: document.title
+        });
+        analyticsPageViewTracked = true;
+    }
+}
+
+function enableMarketingTracking() {
+    const config = getTrackingConfig();
+    const gtagTargets = [];
+    if (config.ga4MeasurementId) gtagTargets.push(config.ga4MeasurementId);
+    if (config.googleAdsId) gtagTargets.push(config.googleAdsId);
+
+    if (gtagTargets.length > 0) {
+        ensureGtagBase(gtagTargets);
+    }
+
+    if (window.gtag) {
+        window.gtag('consent', 'update', {
+            ad_storage: 'granted',
+            ad_user_data: 'granted',
+            ad_personalization: 'granted'
+        });
+    }
+
+    if (config.metaPixelId && !window.fbq) {
+        // Meta pixel is loaded only after explicit marketing consent.
+        (function (f, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function () {
+                n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = true;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = true;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s);
+        })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+
+        window.fbq('init', config.metaPixelId);
+    }
+
+    if (window.fbq && config.metaPixelId) {
+        window.fbq('consent', 'grant');
+        if (!marketingPageViewTracked) {
+            window.fbq('track', 'PageView');
+            marketingPageViewTracked = true;
+        }
+    }
+
+    marketingInitialized = gtagTargets.length > 0 || Boolean(config.metaPixelId);
+}
+
+function disableAnalyticsTracking() {
+    if (window.gtag) {
+        window.gtag('consent', 'update', {
+            analytics_storage: 'denied'
+        });
+    }
+
+    deleteKnownCookiesByPrefix(['_ga', '_gid', '_gat', '_gac_']);
+}
+
+function disableMarketingTracking() {
+    if (window.gtag) {
+        window.gtag('consent', 'update', {
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied'
+        });
+    }
+
+    if (window.fbq) {
+        window.fbq('consent', 'revoke');
+    }
+
+    deleteKnownCookiesByPrefix(['_fbp', '_fbc', '_gcl_', 'IDE', 'test_cookie']);
+}
+
+function getDomainCandidates(hostname) {
+    const candidates = new Set([hostname, `.${hostname}`]);
+    const parts = hostname.split('.').filter(Boolean);
+
+    for (let i = 1; i < parts.length - 1; i++) {
+        const rootDomain = parts.slice(i).join('.');
+        candidates.add(rootDomain);
+        candidates.add(`.${rootDomain}`);
+    }
+
+    return Array.from(candidates);
+}
+
+function getPathCandidates(pathname) {
+    const candidates = new Set(['/']);
+    const segments = pathname.split('/').filter(Boolean);
+    let currentPath = '';
+    segments.forEach((segment) => {
+        currentPath += `/${segment}`;
+        candidates.add(currentPath);
+    });
+    return Array.from(candidates);
+}
+
+function expireCookie(name, path, domain, secure = false) {
+    const attributes = [
+        `${name}=`,
+        'Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+        'Max-Age=0',
+        `Path=${path}`,
+        'SameSite=Lax'
+    ];
+
+    if (domain) {
+        attributes.push(`Domain=${domain}`);
+    }
+
+    if (secure) {
+        attributes.push('Secure');
+    }
+
+    document.cookie = attributes.join('; ');
+}
+
+function deleteKnownCookiesByPrefix(prefixes = []) {
+    if (!document.cookie) return;
+
+    const cookieNames = document.cookie
+        .split(';')
+        .map((item) => item.trim().split('=')[0])
+        .filter(Boolean);
+
+    const targetNames = cookieNames.filter((cookieName) => {
+        return prefixes.some((prefix) => cookieName === prefix || cookieName.startsWith(prefix));
+    });
+
+    if (!targetNames.length) return;
+
+    const domains = getDomainCandidates(window.location.hostname);
+    const paths = getPathCandidates(window.location.pathname);
+    const useSecure = window.location.protocol === 'https:';
+
+    targetNames.forEach((cookieName) => {
+        paths.forEach((path) => {
+            expireCookie(cookieName, path, '', false);
+            expireCookie(cookieName, path, '', useSecure);
+
+            domains.forEach((domain) => {
+                expireCookie(cookieName, path, domain, false);
+                expireCookie(cookieName, path, domain, useSecure);
+            });
+        });
+    });
+}
+
+async function logConsentEvidence(consentPayload) {
+    const config = getTrackingConfig();
+    if (!config.consentLogEndpoint) return;
+
+    const payload = {
+        consent_id: consentPayload.id,
+        consent_version: consentPayload.version,
+        policy_version: config.policyVersion,
+        source: consentPayload.source,
+        updated_at: consentPayload.updatedAt,
+        expires_at: consentPayload.expiresAt,
+        preferences: consentPayload.preferences,
+        page_url: window.location.href,
+        page_path: window.location.pathname,
+        referrer: document.referrer || '',
+        user_agent: navigator.userAgent
+    };
+
+    const body = JSON.stringify(payload);
+    let timeoutId = null;
+
+    try {
+        if (navigator.sendBeacon) {
+            const blob = new Blob([body], { type: 'application/json' });
+            navigator.sendBeacon(config.consentLogEndpoint, blob);
+            return;
+        }
+
+        const controller = new AbortController();
+        timeoutId = window.setTimeout(() => controller.abort(), CONSENT_LOG_TIMEOUT_MS);
+        await fetch(config.consentLogEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body,
+            keepalive: true,
+            signal: controller.signal
+        });
+    } catch (_error) {
+        // Avoid blocking UX for consent logging failures.
+    } finally {
+        if (timeoutId) {
+            window.clearTimeout(timeoutId);
+        }
+    }
+}
+
+function trackCustomEvent(eventName, params = {}) {
+    const consent = readStoredConsent();
+    if (!consent) return;
+    const { analytics, marketing } = consent.preferences;
+
+    if (analytics && window.gtag) {
+        window.gtag('event', eventName, params);
+    }
+
+    if (marketing && window.fbq) {
+        window.fbq('trackCustom', eventName, params);
+    }
+}
+
+function injectConsentMarkup() {
+    if (document.getElementById('cookie-consent-root')) return;
+
+    const root = document.createElement('div');
+    root.id = 'cookie-consent-root';
+    root.innerHTML = `
+        <div class="cookie-consent-banner" id="cookie-consent-banner" role="dialog" aria-modal="true" aria-labelledby="cookie-banner-title" aria-describedby="cookie-banner-desc">
+            <div class="cookie-consent-content">
+                <button type="button" class="cookie-close" data-consent-action="dismiss" aria-label="Chiudi banner cookie">×</button>
+                <h3 id="cookie-banner-title">Cookie e tracciamenti</h3>
+                <p id="cookie-banner-desc">
+                    Usiamo cookie tecnici sempre attivi. Con il tuo consenso attiviamo analytics e marketing per misurare visite, conversioni e campagne.
+                    <a href="cookie-policy.html">Leggi la Cookie Policy</a>.
+                </p>
+                <div class="cookie-consent-actions">
+                    <button type="button" class="cookie-btn cookie-btn-ghost" data-consent-action="deny">Rifiuta non necessari</button>
+                    <button type="button" class="cookie-btn cookie-btn-secondary" data-consent-action="customize">Personalizza</button>
+                    <button type="button" class="cookie-btn cookie-btn-primary" data-consent-action="accept">Accetta tutto</button>
+                </div>
+            </div>
+        </div>
+        <div class="cookie-consent-modal" id="cookie-preferences-modal" role="dialog" aria-modal="true" aria-labelledby="cookie-modal-title" hidden>
+            <div class="cookie-modal-panel">
+                <h3 id="cookie-modal-title">Preferenze cookie</h3>
+                <p>Scegli quali categorie attivare. I cookie tecnici sono necessari al funzionamento del sito.</p>
+                <label class="cookie-pref-row cookie-pref-row-locked">
+                    <span>Cookie tecnici</span>
+                    <input type="checkbox" checked disabled>
+                </label>
+                <label class="cookie-pref-row">
+                    <span>Analytics (misurazione traffico)</span>
+                    <input type="checkbox" id="cookie-pref-analytics">
+                </label>
+                <label class="cookie-pref-row">
+                    <span>Marketing (remarketing e ads)</span>
+                    <input type="checkbox" id="cookie-pref-marketing">
+                </label>
+                <div class="cookie-consent-actions">
+                    <button type="button" class="cookie-btn cookie-btn-ghost" data-consent-action="save-selected">Salva preferenze</button>
+                    <button type="button" class="cookie-btn cookie-btn-primary" data-consent-action="accept">Accetta tutto</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(root);
+}
+
+function openConsentBanner() {
+    const banner = document.getElementById('cookie-consent-banner');
+    if (!banner) return;
+    banner.classList.add('is-visible');
+}
+
+function closeConsentBanner() {
+    const banner = document.getElementById('cookie-consent-banner');
+    if (!banner) return;
+    banner.classList.remove('is-visible');
+}
+
+function openPreferencesModal() {
+    const modal = document.getElementById('cookie-preferences-modal');
+    if (!modal) return;
+
+    const consent = readStoredConsent();
+    const analyticsInput = document.getElementById('cookie-pref-analytics');
+    const marketingInput = document.getElementById('cookie-pref-marketing');
+
+    if (analyticsInput) analyticsInput.checked = Boolean(consent?.preferences?.analytics);
+    if (marketingInput) marketingInput.checked = Boolean(consent?.preferences?.marketing);
+
+    modal.hidden = false;
+    modal.classList.add('is-visible');
+}
+
+function closePreferencesModal() {
+    const modal = document.getElementById('cookie-preferences-modal');
+    if (!modal) return;
+    modal.classList.remove('is-visible');
+    modal.hidden = true;
+}
+
+function bindConsentEvents() {
+    const consentRoot = document.getElementById('cookie-consent-root');
+    if (!consentRoot) return;
+
+    consentRoot.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        const action = target.dataset.consentAction;
+        if (!action) return;
+
+        if (action === 'deny') {
+            const consentRecord = persistConsent(CONSENT_DEFAULT, 'banner_reject_all');
+            applyConsent(consentRecord.preferences);
+            closePreferencesModal();
+            closeConsentBanner();
+            return;
+        }
+
+        if (action === 'dismiss') {
+            const consentRecord = persistConsent(CONSENT_DEFAULT, 'banner_close_x');
+            applyConsent(consentRecord.preferences);
+            closePreferencesModal();
+            closeConsentBanner();
+            return;
+        }
+
+        if (action === 'accept') {
+            const consentRecord = persistConsent({
+                necessary: true,
+                analytics: true,
+                marketing: true
+            }, 'banner_accept_all');
+            applyConsent(consentRecord.preferences);
+            closePreferencesModal();
+            closeConsentBanner();
+            return;
+        }
+
+        if (action === 'customize') {
+            openPreferencesModal();
+            return;
+        }
+
+        if (action === 'save-selected') {
+            const analyticsInput = document.getElementById('cookie-pref-analytics');
+            const marketingInput = document.getElementById('cookie-pref-marketing');
+            const consentRecord = persistConsent({
+                necessary: true,
+                analytics: Boolean(analyticsInput?.checked),
+                marketing: Boolean(marketingInput?.checked)
+            }, 'banner_save_preferences');
+            applyConsent(consentRecord.preferences);
+            closePreferencesModal();
+            closeConsentBanner();
+        }
+    });
+
+    const manageButton = document.getElementById('manage-cookie-preferences');
+    if (manageButton) {
+        manageButton.addEventListener('click', () => {
+            openPreferencesModal();
+        });
+    }
+
+    bindTrackingEvents();
+}
+
+function bindTrackingEvents() {
+    document.querySelectorAll('a[href="#contatti"]').forEach((link) => {
+        link.addEventListener('click', () => {
+            trackCustomEvent('contact_cta_click', {
+                placement: 'navigation'
+            });
+        });
+    });
+
+    const whatsappLink = document.querySelector('.whatsapp-link');
+    if (whatsappLink) {
+        whatsappLink.addEventListener('click', () => {
+            trackCustomEvent('whatsapp_click', {
+                contact_channel: 'whatsapp'
+            });
+        });
+    }
+
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', () => {
+            trackCustomEvent('contact_form_submit', {
+                contact_channel: 'form'
+            });
+        });
+    }
+}
 
 // Hero animation - OTTIMIZZATA per performance
 function initHeroAnimation() {

@@ -12,6 +12,9 @@
         .policy-wrap h2 { font-size: 1.15rem; margin: 2rem 0 0.5rem; }
         .policy-wrap p, .policy-wrap li { font-size: 0.95rem; line-height: 1.7; color: #4a5568; }
         .policy-wrap ul { padding-left: 1.25rem; }
+        .policy-wrap table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; }
+        .policy-wrap th, .policy-wrap td { border: 1px solid #e2e8f0; padding: 0.55rem; text-align: left; font-size: 0.88rem; vertical-align: top; }
+        .policy-wrap th { background: #f8fafc; color: #1f2937; }
         .policy-back { display: inline-block; margin-bottom: 1.5rem; }
     </style>
 </head>
@@ -27,8 +30,65 @@
         <h2>Tipologie di cookie usati</h2>
         <ul>
             <li>Cookie tecnici necessari al funzionamento del sito.</li>
-            <li>Eventuali cookie di terze parti solo se attivati da servizi esterni incorporati.</li>
+            <li>Cookie analytics, attivati solo dopo consenso dell'utente.</li>
+            <li>Cookie marketing/profilazione, attivati solo dopo consenso dell'utente.</li>
         </ul>
+
+        <h2>Base giuridica e consenso</h2>
+        <p>I cookie tecnici sono utilizzati sulla base del legittimo interesse al corretto funzionamento del sito. I cookie analytics e marketing vengono installati solo con consenso esplicito (art. 6, par. 1, lett. a GDPR e art. 122 Codice Privacy/ePrivacy).</p>
+
+        <h2>Elenco cookie e strumenti</h2>
+        <p>I cookie di analytics/marketing sono caricati solo se l'utente li abilita dal banner o dal pannello preferenze.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Categoria</th>
+                    <th>Fornitore</th>
+                    <th>Nome cookie (esempi)</th>
+                    <th>Finalità</th>
+                    <th>Durata indicativa</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tecnici</td>
+                    <td>Sito web</td>
+                    <td>Preferenze locali del browser (local storage)</td>
+                    <td>Memorizzare la scelta sul consenso cookie</td>
+                    <td>180 giorni</td>
+                </tr>
+                <tr>
+                    <td>Analytics</td>
+                    <td>Google Analytics 4</td>
+                    <td><code>_ga</code>, <code>_ga_*</code></td>
+                    <td>Statistiche aggregate su visite, sorgenti traffico ed eventi</td>
+                    <td>Fino a 24 mesi (in base alla configurazione GA4)</td>
+                </tr>
+                <tr>
+                    <td>Marketing</td>
+                    <td>Google Ads</td>
+                    <td><code>_gcl_*</code></td>
+                    <td>Misurazione campagne e conversioni advertising</td>
+                    <td>Fino a 90 giorni</td>
+                </tr>
+                <tr>
+                    <td>Marketing</td>
+                    <td>Meta Pixel</td>
+                    <td><code>_fbp</code>, <code>_fbc</code></td>
+                    <td>Attribuzione campagne e remarketing</td>
+                    <td>Fino a 90 giorni</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Gestione preferenze</h2>
+        <p>Puoi accettare, rifiutare o personalizzare i cookie dal banner iniziale. La chiusura del banner tramite comando "X" mantiene attivi solo i cookie tecnici. In ogni momento puoi modificare la scelta tramite il link "Preferenze cookie" nel footer del sito e revocare il consenso con effetto immediato.</p>
+
+        <h2>Durata e conservazione</h2>
+        <p>La preferenza di consenso viene conservata per 180 giorni. Al termine, o in caso di modifiche sostanziali ai trattamenti, il banner viene riproposto e il consenso viene richiesto nuovamente.</p>
+
+        <h2>Prova del consenso</h2>
+        <p>Il sito memorizza data, versione informativa e scelta dell'utente nel browser. Se configurato dal titolare, un endpoint server registra la prova del consenso per finalità di accountability GDPR.</p>
 
         <h2>Gestione dei cookie</h2>
         <p>Puoi controllare o disabilitare i cookie dalle impostazioni del tuo browser. La disattivazione dei cookie tecnici può compromettere alcune funzionalità del sito.</p>
