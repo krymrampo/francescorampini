@@ -17,10 +17,28 @@ function initHeroAnimation() {
     const heroCta = document.querySelector('.hero-cta');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const description = 'aiuto le attività e professionisti ad alleggerire e efficientare il loro lavoro';
-
     // Verifica che gli elementi esistano per evitare errori
     if (!heroTagline) return;
+
+    const fallbackDescription = (heroTagline.textContent || '').trim();
+    const description = fallbackDescription || 'Aiuto attività e professionisti ad alleggerire e rendere più efficiente il loro lavoro.';
+
+    const lockTaglineHeight = () => {
+        const measuredHeight = Math.ceil(heroTagline.getBoundingClientRect().height);
+        if (measuredHeight > 0) {
+            heroTagline.style.minHeight = `${measuredHeight}px`;
+        }
+    };
+
+    // Evita salti di layout su mobile durante il typewriter.
+    lockTaglineHeight();
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+            if (!heroTagline.classList.contains('typing-complete')) {
+                lockTaglineHeight();
+            }
+        }).catch(() => {});
+    }
 
     // Animate title (fade in) - usa CSS animation invece di JS quando possibile
     if (heroTitle) {
