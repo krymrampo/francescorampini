@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSmoothScroll();
     initEmailDemo();
     initFAQAccordion();
+    initFooterYear();
 });
 
 // Hero animation - OTTIMIZZATA per performance
@@ -14,6 +15,7 @@ function initHeroAnimation() {
     const heroTagline = document.getElementById('typing-description');
     const heroSubtitle = document.querySelector('.hero-subtitle');
     const heroCta = document.querySelector('.hero-cta');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const description = 'aiuto le attività e professionisti ad alleggerire e efficientare il loro lavoro';
 
@@ -24,6 +26,16 @@ function initHeroAnimation() {
     if (heroTitle) {
         heroTitle.style.opacity = '1';
         heroTitle.style.transform = 'translateY(0)';
+    }
+
+    if (prefersReducedMotion) {
+        heroTagline.textContent = description;
+        heroTagline.style.opacity = '1';
+        heroTagline.style.transform = 'translateY(0)';
+
+        if (heroSubtitle) heroSubtitle.classList.add('animate');
+        if (heroCta) heroCta.classList.add('animate');
+        return;
     }
 
     // Type description - usa requestAnimationFrame per timing preciso
@@ -123,19 +135,26 @@ function typeText(element, text, speed) {
 
 // Scroll reveal animations
 function initScrollReveal() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const observerOptions = {
         root: null,
-        rootMargin: '0px',
-        threshold: 0.1
+        rootMargin: '0px 0px -12% 0px',
+        threshold: prefersReducedMotion ? 0.02 : 0.12
     };
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const delay = entry.target.dataset.delay || 0;
-                setTimeout(() => {
-                    entry.target.classList.add('animate');
-                }, parseInt(delay));
+                const delay = prefersReducedMotion ? 0 : parseInt(entry.target.dataset.delay || '0', 10);
+                if (delay > 0) {
+                    window.setTimeout(() => {
+                        entry.target.classList.add('animate');
+                    }, delay);
+                } else {
+                    requestAnimationFrame(() => {
+                        entry.target.classList.add('animate');
+                    });
+                }
                 observer.unobserve(entry.target);
             }
         });
@@ -147,6 +166,11 @@ function initScrollReveal() {
     // Timeline animation
     const timeline = document.querySelector('.process-timeline');
     if (timeline) {
+        if (prefersReducedMotion) {
+            timeline.classList.add('animate');
+            return;
+        }
+
         const timelineObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -154,7 +178,11 @@ function initScrollReveal() {
                     timelineObserver.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.2 });
+        }, {
+            root: null,
+            rootMargin: '0px 0px -18% 0px',
+            threshold: 0.18
+        });
 
         timelineObserver.observe(timeline);
     }
@@ -162,10 +190,17 @@ function initScrollReveal() {
 
 // Email Demo - Split Layout Navigation
 function initEmailDemo() {
+    const demoRoot = document.querySelector('.usecase-demo');
     const stepNavs = document.querySelectorAll('.demo-step-nav');
     const stepPanels = document.querySelectorAll('.demo-step-panel');
 
-    if (!stepNavs.length || !stepPanels.length) return;
+    if (!demoRoot || !stepNavs.length || !stepPanels.length) return;
+
+    const isTypingElement = (element) => {
+        if (!element) return false;
+        const tag = element.tagName;
+        return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || element.isContentEditable;
+    };
 
     function activateStep(stepNumber) {
         // Update navigation
@@ -173,6 +208,11 @@ function initEmailDemo() {
             nav.classList.remove('active');
             if (nav.dataset.step === stepNumber) {
                 nav.classList.add('active');
+                nav.setAttribute('aria-current', 'step');
+                nav.setAttribute('tabindex', '0');
+            } else {
+                nav.setAttribute('aria-current', 'false');
+                nav.setAttribute('tabindex', '-1');
             }
         });
 
@@ -181,9 +221,23 @@ function initEmailDemo() {
             panel.classList.remove('active');
             if (panel.dataset.step === stepNumber) {
                 panel.classList.add('active');
+                panel.setAttribute('aria-hidden', 'false');
+                panel.scrollTop = 0;
+            } else {
+                panel.setAttribute('aria-hidden', 'true');
             }
         });
     }
+
+    stepNavs.forEach(nav => {
+        nav.setAttribute('type', 'button');
+        nav.setAttribute('aria-current', 'false');
+        nav.setAttribute('tabindex', '-1');
+    });
+
+    stepPanels.forEach(panel => {
+        panel.setAttribute('aria-hidden', 'true');
+    });
 
     // Click handlers for navigation
     stepNavs.forEach(nav => {
@@ -194,16 +248,22 @@ function initEmailDemo() {
 
     // Optional: keyboard navigation
     document.addEventListener('keydown', (e) => {
+        if (isTypingElement(document.activeElement)) return;
+
+        const isDemoHovered = demoRoot.matches(':hover');
+        const isDemoFocused = demoRoot.contains(document.activeElement);
+        if (!isDemoHovered && !isDemoFocused) return;
+
         const activeNav = document.querySelector('.demo-step-nav.active');
         if (!activeNav) return;
 
         const currentStep = parseInt(activeNav.dataset.step);
         const totalSteps = stepNavs.length;
 
-        if (e.key === 'ArrowDown' && currentStep < totalSteps) {
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowRight') && currentStep < totalSteps) {
             e.preventDefault();
             activateStep(String(currentStep + 1));
-        } else if (e.key === 'ArrowUp' && currentStep > 1) {
+        } else if ((e.key === 'ArrowUp' || e.key === 'ArrowLeft') && currentStep > 1) {
             e.preventDefault();
             activateStep(String(currentStep - 1));
         }
@@ -220,32 +280,81 @@ function initFormHandling() {
 
     const submitBtn = form.querySelector('.btn-submit');
     const btnText = submitBtn.querySelector('.btn-text');
+    const endpoint = form.dataset.endpoint?.trim();
+    const fallbackMail = form.dataset.mailto?.trim() || 'info@francescorampini.it';
+
+    const setSubmittingState = (isSubmitting, text, color = '') => {
+        btnText.textContent = text;
+        submitBtn.disabled = isSubmitting;
+        submitBtn.style.borderColor = color;
+        submitBtn.style.color = color;
+    };
+
+    const resetButtonState = () => {
+        btnText.textContent = 'Invia';
+        submitBtn.disabled = false;
+        submitBtn.style.borderColor = '';
+        submitBtn.style.color = '';
+    };
+
+    const buildMailtoUrl = ({ name, email, message }) => {
+        const subject = encodeURIComponent(`Richiesta dal sito - ${name || 'Nuovo contatto'}`);
+        const body = encodeURIComponent(
+            [
+                'Nuovo messaggio dal sito:',
+                '',
+                `Nome: ${name || '-'}`,
+                `Email: ${email || '-'}`,
+                '',
+                'Messaggio:',
+                `${message || '-'}`
+            ].join('\n')
+        );
+
+        return `mailto:${fallbackMail}?subject=${subject}&body=${body}`;
+    };
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (!form.reportValidity()) return;
 
         const formData = new FormData(form);
         const data = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            message: formData.get('message')
+            name: String(formData.get('name') || '').trim(),
+            email: String(formData.get('email') || '').trim(),
+            message: String(formData.get('message') || '').trim()
         };
 
-        btnText.textContent = 'Invio...';
-        submitBtn.disabled = true;
+        setSubmittingState(true, 'Invio...');
 
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        try {
+            if (endpoint) {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
 
-        btnText.textContent = 'Inviato!';
-        submitBtn.style.borderColor = '#22c55e';
-        submitBtn.style.color = '#22c55e';
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                setSubmittingState(true, 'Inviato!', '#22c55e');
+            } else {
+                window.location.href = buildMailtoUrl(data);
+                setSubmittingState(true, 'Apri email', '#22c55e');
+            }
+
+            form.reset();
+        } catch (error) {
+            setSubmittingState(true, 'Errore invio', '#dc2626');
+        }
 
         setTimeout(() => {
-            form.reset();
-            btnText.textContent = 'Invia';
-            submitBtn.disabled = false;
-            submitBtn.style.borderColor = '';
-            submitBtn.style.color = '';
+            resetButtonState();
         }, 2000);
     });
 
@@ -265,6 +374,7 @@ function initFormHandling() {
 // Smooth scroll for navigation links
 function initSmoothScroll() {
     const navLinks = document.querySelectorAll('a[href^="#"]');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
@@ -278,7 +388,7 @@ function initSmoothScroll() {
 
                 window.scrollTo({
                     top: targetPosition,
-                    behavior: 'smooth'
+                    behavior: prefersReducedMotion ? 'auto' : 'smooth'
                 });
             }
         });
@@ -335,3 +445,9 @@ function initFAQAccordion() {
 window.addEventListener('load', () => {
     document.body.classList.add('loaded');
 });
+
+function initFooterYear() {
+    const footerYear = document.getElementById('footer-year');
+    if (!footerYear) return;
+    footerYear.textContent = String(new Date().getFullYear());
+}
