@@ -670,10 +670,10 @@ function initHeroAnimation() {
             heroTagline.style.transform = 'translateY(0)';
 
             // Avvia l'animazione typewriter
-            typeTextWithCursor(heroTagline, description, 45);
+            typeTextWithCursor(heroTagline, description, 35);
 
             // Calcola quando finisce l'animazione (ms per carattere * numero caratteri)
-            const animDuration = description.length * 45;
+            const animDuration = description.length * 35;
 
             // Schedule animazioni successive
             if (heroSubtitle) {
