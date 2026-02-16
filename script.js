@@ -47,6 +47,8 @@ function initHeroAnimation() {
     }
 
     if (prefersReducedMotion) {
+        heroTagline.dataset.typewriter = 'complete';
+        heroTagline.style.visibility = 'visible';
         heroTagline.textContent = description;
         heroTagline.style.opacity = '1';
         heroTagline.style.transform = 'translateY(0)';
@@ -63,6 +65,8 @@ function initHeroAnimation() {
     requestAnimationFrame(() => {
         setTimeout(() => {
             // Prepara l'elemento per l'animazione
+            heroTagline.dataset.typewriter = 'running';
+            heroTagline.style.visibility = 'visible';
             heroTagline.style.opacity = '1';
             heroTagline.style.transform = 'translateY(0)';
 
@@ -128,6 +132,7 @@ function typeTextWithCursor(element, text, speed) {
             requestAnimationFrame(type);
         } else {
             // Animazione completata, aggiungi classe per stato finale
+            element.dataset.typewriter = 'complete';
             element.classList.add('typing-complete');
         }
     }

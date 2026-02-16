@@ -262,6 +262,10 @@ body {
     contain: layout style;
 }
 
+.js .hero-tagline[data-typewriter="pending"] {
+    visibility: hidden;
+}
+
 /* Struttura: span testo + span cursore */
 .hero-tagline .typing-text {
     display: inline;
