@@ -995,24 +995,103 @@ function initFormHandling() {
 }
 
 function initAIAssistant() {
+    const widget = document.getElementById('ai-widget');
+    const panel = document.getElementById('ai-widget-panel');
+    const toggleBtn = document.getElementById('ai-widget-toggle');
+    const closeBtn = document.getElementById('ai-widget-close');
     const form = document.getElementById('ai-assistant-form');
-    if (!form) return;
+    if (!widget || !panel || !toggleBtn || !closeBtn || !form) return;
 
     const questionInput = document.getElementById('ai-question');
     const submitBtn = form.querySelector('.ai-submit-btn');
     const btnText = form.querySelector('.ai-btn-text');
-    const statusEl = document.getElementById('ai-assistant-status');
-    const responseEl = document.getElementById('ai-assistant-response');
-    if (!questionInput || !submitBtn || !btnText || !statusEl || !responseEl) return;
+    const chatThread = document.getElementById('ai-chat-thread');
+    if (!questionInput || !submitBtn || !btnText || !chatThread) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const setWidgetOpen = (shouldOpen, { focusInput = false } = {}) => {
+        widget.dataset.open = shouldOpen ? 'true' : 'false';
+        toggleBtn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+        panel.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+        panel.inert = !shouldOpen;
+
+        if (shouldOpen && focusInput) {
+            window.setTimeout(() => {
+                questionInput.focus();
+            }, 120);
+        }
+    };
+
+    setWidgetOpen(false);
+
+    toggleBtn.addEventListener('click', () => {
+        const isOpen = widget.dataset.open === 'true';
+        setWidgetOpen(!isOpen, { focusInput: !isOpen });
+    });
+
+    const quickOpenButtons = document.querySelectorAll('[data-open-ai-widget]');
+    quickOpenButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            setWidgetOpen(true, { focusInput: true });
+        });
+    });
+
+    closeBtn.addEventListener('click', () => {
+        setWidgetOpen(false);
+        toggleBtn.focus();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && widget.dataset.open === 'true') {
+            setWidgetOpen(false);
+            toggleBtn.focus();
+        }
+    });
 
     const setLoading = (isLoading) => {
         submitBtn.disabled = isLoading;
-        btnText.textContent = isLoading ? 'Invio...' : 'Chiedi al bot';
+        questionInput.disabled = isLoading;
+        btnText.textContent = isLoading ? 'Attendi...' : 'Invia domanda';
     };
 
-    const setStatus = (message, color = '') => {
-        statusEl.textContent = message;
-        statusEl.style.color = color;
+    const scrollChatToBottom = () => {
+        chatThread.scrollTop = chatThread.scrollHeight;
+    };
+
+    const appendBubble = (role, text = '') => {
+        const bubble = document.createElement('div');
+        bubble.className = role === 'user'
+            ? 'ai-chat-bubble ai-chat-bubble-user'
+            : 'ai-chat-bubble ai-chat-bubble-assistant';
+        bubble.textContent = text;
+        chatThread.appendChild(bubble);
+        scrollChatToBottom();
+        return bubble;
+    };
+
+    const appendLoadingBubble = () => {
+        const bubble = document.createElement('div');
+        bubble.className = 'ai-chat-bubble ai-chat-bubble-assistant ai-chat-bubble-loading';
+        bubble.innerHTML = '<span class="ai-typing-indicator" aria-hidden="true"><span class="ai-typing-bar"></span><span class="ai-typing-bar"></span><span class="ai-typing-bar"></span></span><span class="ai-typing-text">sto scrivendo...</span>';
+        chatThread.appendChild(bubble);
+        scrollChatToBottom();
+        return bubble;
+    };
+
+    const setAssistantResponse = (text) => {
+        const message = String(text || '').trim();
+        if (!message) return;
+        const bubble = appendBubble('assistant', message);
+        if (!prefersReducedMotion) {
+            bubble.animate(
+                [
+                    { opacity: 0, transform: 'translateY(4px)' },
+                    { opacity: 1, transform: 'translateY(0)' }
+                ],
+                { duration: 220, easing: 'ease-out' }
+            );
+        }
     };
 
     form.addEventListener('submit', async (e) => {
@@ -1020,15 +1099,15 @@ function initAIAssistant() {
 
         const question = String(questionInput.value || '').trim();
         if (!question) {
-            setStatus('Scrivi prima una domanda.', '#b91c1c');
             questionInput.focus();
             return;
         }
 
+        setWidgetOpen(true);
+        appendBubble('user', question);
+        questionInput.value = '';
         setLoading(true);
-        setStatus('Sto preparando una risposta...', '#036b7a');
-        responseEl.hidden = true;
-        responseEl.textContent = '';
+        const loadingBubble = appendLoadingBubble();
 
         try {
             const response = await fetch('/api/chat', {
@@ -1051,9 +1130,8 @@ function initAIAssistant() {
                 throw new Error(payload?.error || `HTTP ${response.status}`);
             }
 
-            responseEl.textContent = payload.answer;
-            responseEl.hidden = false;
-            setStatus('Risposta pronta.', '#166534');
+            loadingBubble.remove();
+            setAssistantResponse(payload.answer);
 
             if (typeof trackCustomEvent === 'function') {
                 trackCustomEvent('ai_assistant_question', {
@@ -1061,9 +1139,11 @@ function initAIAssistant() {
                 });
             }
         } catch (_error) {
-            setStatus('Ora non riesco a rispondere. Scrivimi su WhatsApp e ti aiuto io.', '#b91c1c');
+            loadingBubble.remove();
+            setAssistantResponse('Ora non riesco a rispondere. Scrivimi su WhatsApp e ti aiuto io.');
         } finally {
             setLoading(false);
+            questionInput.focus();
         }
     });
 }

@@ -1,15 +1,23 @@
 const MAX_BODY_CHARS = 8000;
 const MAX_QUESTION_CHARS = 600;
+const MAX_ANSWER_WORDS = 65;
 
 const SYSTEM_PROMPT = [
     'Sei l\'assistente digitale di Francesco Rampini, consulente di automazioni per PMI e professionisti.',
+    'Il tuo obiettivo e\' fare una prima valutazione informativa: capire se la richiesta e\' in linea con i servizi offerti.',
+    'Servizi in focus: automazioni aziendali pratiche, agenti AI per processi operativi/commerciali e restyling digitale.',
+    'Esempi tipici: follow-up clienti, gestione lead, preventivi, email, report, integrazioni tra strumenti comuni.',
+    'Se la richiesta e\' fuori perimetro (es. migrazione completa database, ETL molto tecnico, data engineering avanzato), dillo in modo chiaro e gentile.',
+    'Quando qualcosa e\' fuori perimetro, non improvvisare: suggerisci di contattare Francesco per capire eventuali alternative piu\' semplici.',
     'Rispondi in italiano, in modo semplice, pratico e rassicurante.',
+    'Mantieni ogni risposta breve: massimo 3 frasi e massimo 60 parole.',
     'Evita tecnicismi non necessari e frasi troppo lunghe.',
     'Quando utile, usa punti elenco brevi.',
-    'Non inventare prezzi precisi: spiega da cosa dipende il costo.',
+    'Se chiedono prezzi, resta su cifre qualitative: puoi dare un range orientativo basso, ma specifica sempre che non e\' un preventivo definitivo.',
+    'Per i costi, chiarisci che il prezzo reale dipende dal progetto e viene confermato solo dopo confronto diretto con Francesco.',
     'Non fare promesse assolute sui risultati.',
     'Se la richiesta e\' complessa, suggerisci di proseguire su WhatsApp o dal form contatti.',
-    'Focus dei servizi: automazioni su misura, integrazione strumenti, gestione lead/email/preventivi/report.',
+    'Quando la richiesta non e\' chiara, fai al massimo 1 domanda di chiarimento prima di concludere.',
     'Chiudi con un prossimo passo concreto in una frase.'
 ].join(' ');
 
@@ -40,6 +48,14 @@ function extractTextFromResponse(payload) {
     });
 
     return chunks.filter(Boolean).join('\n').trim();
+}
+
+function shortenAnswer(text, maxWords = MAX_ANSWER_WORDS) {
+    const normalized = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!normalized) return '';
+    const words = normalized.split(' ');
+    if (words.length <= maxWords) return normalized;
+    return `${words.slice(0, maxWords).join(' ')}...`;
 }
 
 export async function POST(request) {
@@ -86,7 +102,7 @@ export async function POST(request) {
                 input: question,
                 reasoning: { effort: 'minimal' },
                 text: { verbosity: 'low' },
-                max_output_tokens: 420
+                max_output_tokens: 220
             })
         });
 
@@ -103,7 +119,7 @@ export async function POST(request) {
         }
 
         const responsePayload = await openAiResponse.json();
-        const answer = extractTextFromResponse(responsePayload);
+        const answer = shortenAnswer(extractTextFromResponse(responsePayload));
         if (!answer) {
             return json({ ok: false, error: 'Nessuna risposta generata' }, 502);
         }
@@ -120,4 +136,3 @@ export async function GET() {
         message: 'Endpoint chat attivo. Invia POST JSON con { "question": "..." }.'
     });
 }
-
