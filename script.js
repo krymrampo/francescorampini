@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeroAnimation();
     initScrollReveal();
     initFormHandling();
+    initAIAssistant();
     initSmoothScroll();
     initEmailDemo();
     initFAQAccordion();
@@ -990,6 +991,80 @@ function initFormHandling() {
                 input.parentElement.classList.remove('focused');
             }
         });
+    });
+}
+
+function initAIAssistant() {
+    const form = document.getElementById('ai-assistant-form');
+    if (!form) return;
+
+    const questionInput = document.getElementById('ai-question');
+    const submitBtn = form.querySelector('.ai-submit-btn');
+    const btnText = form.querySelector('.ai-btn-text');
+    const statusEl = document.getElementById('ai-assistant-status');
+    const responseEl = document.getElementById('ai-assistant-response');
+    if (!questionInput || !submitBtn || !btnText || !statusEl || !responseEl) return;
+
+    const setLoading = (isLoading) => {
+        submitBtn.disabled = isLoading;
+        btnText.textContent = isLoading ? 'Invio...' : 'Chiedi al bot';
+    };
+
+    const setStatus = (message, color = '') => {
+        statusEl.textContent = message;
+        statusEl.style.color = color;
+    };
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const question = String(questionInput.value || '').trim();
+        if (!question) {
+            setStatus('Scrivi prima una domanda.', '#b91c1c');
+            questionInput.focus();
+            return;
+        }
+
+        setLoading(true);
+        setStatus('Sto preparando una risposta...', '#036b7a');
+        responseEl.hidden = true;
+        responseEl.textContent = '';
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ question })
+            });
+
+            let payload = null;
+            try {
+                payload = await response.json();
+            } catch (_error) {
+                payload = null;
+            }
+
+            if (!response.ok || !payload?.ok || !payload?.answer) {
+                throw new Error(payload?.error || `HTTP ${response.status}`);
+            }
+
+            responseEl.textContent = payload.answer;
+            responseEl.hidden = false;
+            setStatus('Risposta pronta.', '#166534');
+
+            if (typeof trackCustomEvent === 'function') {
+                trackCustomEvent('ai_assistant_question', {
+                    question_length: question.length
+                });
+            }
+        } catch (_error) {
+            setStatus('Ora non riesco a rispondere. Scrivimi su WhatsApp e ti aiuto io.', '#b91c1c');
+        } finally {
+            setLoading(false);
+        }
     });
 }
 

@@ -2831,10 +2831,18 @@ body {
     letter-spacing: 0.02em;
 }
 
+.contact-intro {
+    font-size: 0.92rem;
+    color: var(--gray-dark);
+    font-weight: 250;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
 .contact-form {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.4rem;
 }
 
 .form-group {
@@ -2866,6 +2874,12 @@ body {
     transition: border-color var(--transition-fast);
 }
 
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #7c858f;
+    font-weight: 250;
+}
+
 .form-group input:focus,
 .form-group textarea:focus {
     border-color: var(--black);
@@ -2875,6 +2889,8 @@ body {
 .form-group textarea:focus-visible,
 .btn-submit:focus-visible,
 .whatsapp-link:focus-visible,
+.ai-submit-btn:focus-visible,
+.ai-assistant-form textarea:focus-visible,
 .faq-question:focus-visible {
     outline: 2px solid rgba(2, 136, 156, 0.7);
     outline-offset: 3px;
@@ -2893,6 +2909,31 @@ body {
 .form-group input:focus ~ .input-line,
 .form-group textarea:focus ~ .input-line {
     width: 100%;
+}
+
+.contact-hints {
+    margin: -0.1rem 0 0.2rem;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.35rem;
+}
+
+.contact-hints li {
+    position: relative;
+    padding-left: 0.95rem;
+    font-size: 0.79rem;
+    color: var(--gray-dark);
+    font-weight: 300;
+    letter-spacing: 0.01em;
+}
+
+.contact-hints li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #02889c;
 }
 
 .btn-submit {
@@ -2948,60 +2989,221 @@ body {
 .contact-whatsapp-col {
     display: flex;
     flex-direction: column;
+    gap: 1.35rem;
 }
 
 .whatsapp-desc {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     color: var(--gray-dark);
-    font-weight: 200;
+    font-weight: 250;
     line-height: 1.6;
-    margin-bottom: 2rem;
+    margin-bottom: 0.25rem;
 }
 
 .whatsapp-link {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    padding: 2.5rem 2rem;
-    border: 1px solid #25d366;
-    border-radius: var(--radius);
-    color: #25d366;
+    align-items: flex-start;
+    gap: 0.45rem;
+    padding: 0.95rem 0;
+    border-top: 1px solid var(--gray);
+    border-bottom: 1px solid var(--gray);
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    color: var(--black);
     text-decoration: none;
     transition: all var(--transition-fast);
     background: transparent;
-    text-align: center;
+    text-align: left;
 }
 
 .whatsapp-link:hover {
-    background: #25d366;
-    color: var(--white);
+    opacity: 0.82;
 }
 
-.whatsapp-icon-large {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.channel-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gray-dark);
 }
 
-.whatsapp-icon-large svg {
-    width: 100%;
-    height: 100%;
+.ai-badge {
+    color: var(--gray-dark);
 }
 
 .whatsapp-text-large {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.8125rem;
-    font-weight: 400;
-    letter-spacing: 0.05em;
+    font-size: 1rem;
+    font-weight: 350;
+    letter-spacing: 0.005em;
+    color: var(--black);
 }
 
 .whatsapp-number-large {
-    font-family: 'VT323', monospace;
-    font-size: 1.5rem;
-    letter-spacing: 0.05em;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.88rem;
+    letter-spacing: 0.03em;
+    color: var(--gray-dark);
+}
+
+.whatsapp-response-time {
+    font-size: 0.75rem;
+    font-weight: 350;
+    color: var(--gray-dark);
+}
+
+.whatsapp-cta {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--black);
+    border-radius: var(--radius-sm);
+    padding: 0.34rem 0.62rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-top: 0.25rem;
+    transition: all var(--transition-fast);
+}
+
+.whatsapp-link:hover .whatsapp-cta {
+    background: var(--black);
+    color: var(--white);
+}
+
+.ai-assistant-card {
+    border: none;
+    border-top: 1px solid var(--gray);
+    background: transparent;
+    padding: 0.95rem 0 0;
+}
+
+.ai-assistant-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.5rem;
+}
+
+.ai-availability {
+    font-size: 0.73rem;
+    color: var(--gray-dark);
+    font-weight: 350;
+}
+
+.ai-assistant-desc {
+    font-size: 0.84rem;
+    color: var(--gray-dark);
+    font-weight: 300;
+    line-height: 1.5;
+    margin-bottom: 0.8rem;
+}
+
+.ai-assistant-form {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.ai-assistant-form label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-dark);
+}
+
+.ai-assistant-form textarea {
+    width: 100%;
+    min-height: 88px;
+    resize: vertical;
+    padding: 0.75rem;
+    border: 1px solid var(--gray);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--black);
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.ai-assistant-form textarea::placeholder {
+    color: #64748b;
+}
+
+.ai-assistant-form textarea:focus {
+    border-color: var(--black);
+    outline: none;
+}
+
+.ai-assistant-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.ai-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--black);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--black);
+    padding: 0.45rem 1rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.ai-submit-btn:hover {
+    background: var(--black);
+    border-color: var(--black);
+    color: var(--white);
+}
+
+.ai-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ai-btn-arrow {
+    transition: transform var(--transition-fast);
+}
+
+.ai-submit-btn:hover .ai-btn-arrow {
+    transform: translateX(3px);
+}
+
+.ai-assistant-note {
+    font-size: 0.72rem;
+    color: var(--gray-dark);
+    line-height: 1.45;
+}
+
+.ai-assistant-status {
+    min-height: 1.1em;
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--gray-dark);
+}
+
+.ai-assistant-response {
+    margin-top: 0.1rem;
+    border: 1px solid var(--gray);
+    background: transparent;
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 0.75rem;
+    font-size: 0.86rem;
+    color: var(--black);
+    line-height: 1.55;
+    white-space: pre-wrap;
 }
 
 /* FAQ Section */
@@ -3074,12 +3276,32 @@ body {
     padding-bottom: 1.25rem;
 }
 
-.faq-answer p {
-    font-size: 1rem;
+.faq-answer-list {
+    margin: 0;
+    padding: 0.125rem 0 0 0;
+    list-style: none;
+    display: grid;
+    gap: 0.5rem;
+}
+
+.faq-answer-list li {
+    position: relative;
+    padding-left: 1rem;
+    font-size: 0.98rem;
     color: var(--gray-dark);
-    font-weight: 200;
-    line-height: 1.7;
+    font-weight: 250;
+    line-height: 1.6;
     text-align: left;
+}
+
+.faq-answer-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    top: 0.02rem;
+    color: #02889c;
+    font-size: 1rem;
+    line-height: 1;
 }
 
 /* Tech Stack Marquee Section */
@@ -3714,17 +3936,29 @@ body {
         gap: 2.5rem;
     }
 
-    .whatsapp-link {
-        padding: 1.5rem;
+    .contact-intro {
+        font-size: 0.84rem;
     }
 
-    .whatsapp-icon-large {
-        width: 36px;
-        height: 36px;
+    .whatsapp-link {
+        padding: 0.8rem 0;
+    }
+
+    .whatsapp-text-large {
+        font-size: 0.95rem;
     }
 
     .whatsapp-number-large {
-        font-size: 1.25rem;
+        font-size: 0.82rem;
+    }
+
+    .ai-assistant-card {
+        padding: 0.8rem 0 0;
+    }
+
+    .ai-assistant-form textarea {
+        min-height: 76px;
+        font-size: 0.85rem;
     }
 
     /* Tech Stack Mobile */
